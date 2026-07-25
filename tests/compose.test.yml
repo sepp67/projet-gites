@@ -1,0 +1,30 @@
+# Compose utilisé UNIQUEMENT par tests/test-persistence.sh et
+# tests/test-update-rollback.sh — jamais pour le développement (voir
+# compose.dev.yml à la racine) ni pour la production (voir
+# ansible-role-grav-site:1.0.1). Volumes nommés par projet Compose pour ne
+# jamais entrer en collision avec compose.dev.yml.
+
+services:
+  grav:
+    image: "${PROJET_GITES_TEST_IMAGE:-projet-gites:test}"
+    container_name: projet-gites-test-stack
+
+    environment:
+      GRAV_ADMIN_USER: admin
+      GRAV_ADMIN_PASSWORD: ChangeMe123
+      GRAV_ADMIN_EMAIL: admin@example.com
+
+    ports:
+      - "18082:80"
+
+    volumes:
+      - pages_data:/var/www/html/user/pages
+      - accounts_data:/var/www/html/user/accounts
+      - data_data:/var/www/html/user/data
+      - images_data:/var/www/html/user/images
+
+volumes:
+  pages_data:
+  accounts_data:
+  data_data:
+  images_data:

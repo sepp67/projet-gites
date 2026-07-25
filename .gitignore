@@ -1,0 +1,29 @@
+# Secrets — ne doivent jamais être versionnés. Injectés en production via
+# grav_secrets (ansible-role-grav-site:1.0.1), voir docs/secrets-and-config.md.
+# Chemin à plat sous user/config/ (pas de sous-dossier plugins/ — voir
+# docs/secrets-and-config.md pour l'historique de cette contrainte).
+grav/user/config/email-private.php
+grav/user/config/security-private.php
+
+# Comptes utilisateurs et données d'exécution — persistants, jamais dans le
+# dépôt. compose.dev.yml utilise des volumes Docker nommés (pas de bind
+# mount dans grav/user/) : ces chemins ne devraient normalement jamais
+# apparaître ici, conservés par prudence si un développeur bind-mount
+# localement pour déboguer.
+grav/user/accounts/
+grav/user/cache/
+grav/user/logs/
+grav/user/backup/
+grav/user/data/
+grav/user/images/
+grav/user/.initialized
+
+# Artefacts de build/test locaux
+tests/output/
+tests/**/*.actual
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

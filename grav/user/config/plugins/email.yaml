@@ -1,0 +1,6 @@
+from: admin@lavallee.tech
+from_name: 'Site Gîtes'
+to: admin@lavallee.tech
+mailer:
+  engine: smtp
+content_type: text/html
