@@ -4,6 +4,7 @@ name: CI — build and smoke tests
 # fait que valider le build et le comportement de l'image sur chaque push
 # et chaque pull request. Seul release.yml, déclenché exclusivement par un
 # tag SemVer, publie sur GHCR (voir docs/release-and-rollback.md).
+
 on:
   push:
     branches: ["**"]
@@ -36,7 +37,7 @@ jobs:
 
       - name: Secrets handling and absence of committed secrets
         run: sh tests/test-secrets.sh
-
+        
       # test-persistence.sh et test-update-rollback.sh restent documentés
       # et exécutables localement (docs/testing.md) : scénarios à deux temps
       # plus longs, non bloquants pour ce workflow.
