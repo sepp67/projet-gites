@@ -27,3 +27,12 @@ tests/**/*.actual
 .vscode/
 .idea/
 .DS_Store
+
+docs/cdr/
+docs/context/
+docs/conventions/
+docs/dr/
+docs/infra/
+docs/model/
+docs/planning/
+docs/workflow/
