@@ -7,7 +7,7 @@
 #
 # Version épinglée explicitement — jamais "latest" (voir
 # docs/compatibility-policy.md pour la matrice de compatibilité certifiée).
-FROM ghcr.io/sepp67/grav-runtime:1.0.2
+FROM ghcr.io/sepp67/grav-runtime:1.0.3
 
 # Code applicatif immuable : thème, plugins métier, configuration versionnée
 # (voir docs/secrets-and-config.md pour la classification détaillée).
