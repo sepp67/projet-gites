@@ -7,5 +7,5 @@ return [
     'port'       => '2525',
     'encryption' => 'tls',
     'user'       => 'test-user@test.invalid',
-    'password'   => 'FIXTURE-SECRET-DO-NOT-REUSE-9f8e7d6c',
+    'password'   => 'CI_FIXTURE_SECRET_DO_NOT_SHIP_7f31c9',
 ];

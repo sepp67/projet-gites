@@ -2,29 +2,137 @@
 # (12)(13)(14) Absence de secrets/comptes dans l'image construite, et
 # injection correcte du secret SMTP (user/config/email-private.php) selon
 # les trois cas identifiés en Phase 1 : absent / valide / invalide.
+#
+# Incident corrigé ici : la version précédente de ce script grep-ait la
+# sortie de `docker save` (couches compressées gzip, quasi jamais lisibles
+# par un grep littéral — voir docs/testing.md) ET cherchait des motifs
+# génériques ("admin@example.com") qui apparaissent légitimement dans la
+# documentation des plugins techniques vendorisés par grav-runtime
+# (api/email/login) — faux positif, jamais un secret. Corrigé pour :
+#   (a) inspecter le FILESYSTEM FINAL réel de l'image (docker export d'un
+#       conteneur créé mais jamais démarré), pas l'historique des couches
+#       compressées, qui reste vérifié séparément et explicitement ;
+#   (b) chercher des indicateurs précis (une sentinelle unique pour les
+#       fixtures, un secret réel historiquement connu), jamais des termes
+#       génériques (voir docs/secrets-and-config.md).
 . "$(dirname "$0")/lib.sh"
 
 cd "$REPO_ROOT"
 CONTAINER="projet-gites-test-secrets"
 PORT="18083"
-IMAGE_TAR="$(mktemp -u).tar"
-EXTRACT_DIR="$(mktemp -d)"
+
+# Sentinelle unique, utilisée uniquement dans tests/fixtures/email-private.valid.php
+# — ne doit jamais apparaître dans l'image, quelle que soit la méthode d'inspection.
+FIXTURE_SENTINEL="CI_FIXTURE_SECRET_DO_NOT_SHIP_7f31c9"
+
+# Secret réel historique : l'hôte SMTP OVH qui était hardcodé dans email.yaml
+# avant la migration Phase 2 (voir docs/secrets-and-config.md). Sa présence
+# dans l'image signalerait une régression réelle, pas un faux positif.
+KNOWN_SECRET_HOST="ssl0.ovh.net"
+
+ROOTFS_TAR="$(mktemp -u).tar"
+ROOTFS_DIR="$(mktemp -d)"
+CREATE_CID=""
 
 cleanup() {
   docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
-  rm -f "$IMAGE_TAR"
-  rm -rf "$EXTRACT_DIR"
+  [ -n "$CREATE_CID" ] && docker rm -f "$CREATE_CID" >/dev/null 2>&1 || true
+  rm -f "$ROOTFS_TAR"
+  rm -rf "$ROOTFS_DIR"
 }
 trap cleanup EXIT
 
-# --- (12) aucun secret dans les couches de l'image -------------------------
-log "export de l'image et recherche de secrets/placeholders connus"
-docker save "$IMAGE" -o "$IMAGE_TAR"
-tar -xf "$IMAGE_TAR" -C "$EXTRACT_DIR"
-if grep -rl "ChangeMe123\|admin@example.com\|lavallee.tech.*password" "$EXTRACT_DIR" >/dev/null 2>&1; then
-  fail "des valeurs de test/placeholder ont été trouvées dans les couches de l'image"
+# Échec avec preuve : motif recherché, fichiers concernés (chemin relatif),
+# ligne de contexte — jamais un simple "échec" sans détail.
+evidence_grep() {
+  pattern="$1"
+  dir="$2"
+  label="$3"
+  matches="$(grep -rIn "$pattern" "$dir" 2>/dev/null || true)"
+  if [ -n "$matches" ]; then
+    echo "[FAIL] motif détecté : $pattern" >&2
+    echo "[FAIL] raison : $label" >&2
+    echo "$matches" | while IFS= read -r line; do
+      echo "  -> ${line#"$dir"/}" >&2
+    done
+    fail "$label"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# (12a) Filesystem final réel de l'image, via `docker create` + `docker
+# export` : le conteneur n'est jamais démarré (l'entrypoint ne s'exécute
+# pas), donc ce qu'on inspecte est exactement ce que livre l'image, rien de
+# plus. C'est la bonne méthode pour chercher du contenu — contrairement à
+# `docker save`, dont les couches restent compressées et donc quasiment
+# invisibles à un grep littéral.
+# ---------------------------------------------------------------------------
+log "export du filesystem final de l'image (docker create + docker export)"
+CREATE_CID="$(docker create "$IMAGE")"
+docker export "$CREATE_CID" -o "$ROOTFS_TAR"
+docker rm -f "$CREATE_CID" >/dev/null 2>&1
+CREATE_CID=""
+tar -xf "$ROOTFS_TAR" -C "$ROOTFS_DIR" 2>/dev/null
+
+log "recherche de la sentinelle de fixture (ne doit jamais apparaître)"
+evidence_grep "$FIXTURE_SENTINEL" "$ROOTFS_DIR" \
+  "la sentinelle de fixture '$FIXTURE_SENTINEL' est présente dans le filesystem final de l'image"
+
+log "recherche de l'hôte SMTP historiquement hardcodé ($KNOWN_SECRET_HOST)"
+evidence_grep "$KNOWN_SECRET_HOST" "$ROOTFS_DIR" \
+  "l'hôte SMTP '$KNOWN_SECRET_HOST' est présent dans le filesystem final — régression : il ne devrait exister que dans email-private.php, jamais dans l'image (voir docs/secrets-and-config.md)"
+
+log "absence des fichiers secrets réels (email-private.php, security-private.php)"
+found_secret_files="$(find "$ROOTFS_DIR" -iname "email-private.php" -o -iname "security-private.php" 2>/dev/null)"
+if [ -n "$found_secret_files" ]; then
+  echo "[FAIL] fichiers secrets présents dans le filesystem final :" >&2
+  echo "$found_secret_files" >&2
+  fail "email-private.php ou security-private.php trouvé dans l'image"
 fi
-log "aucun secret/placeholder connu trouvé dans l'image"
+
+log "user/accounts vide dans le filesystem final (aucun compte baké)"
+accounts_dir="$ROOTFS_DIR/var/www/html/user/accounts"
+if [ -d "$accounts_dir" ] && [ -n "$(ls -A "$accounts_dir" 2>/dev/null)" ]; then
+  echo "[FAIL] contenu inattendu dans user/accounts :" >&2
+  ls -la "$accounts_dir" >&2
+  fail "user/accounts n'est pas vide dans le filesystem final de l'image"
+fi
+
+log "filesystem final : aucune sentinelle, aucun secret réel connu, aucun compte"
+
+# ---------------------------------------------------------------------------
+# (12b) Historique des couches, en complément — défense en profondeur.
+# `docker export` ne montre que l'état final fusionné : si un secret avait
+# été copié puis supprimé dans une couche ultérieure, il resterait invisible
+# à ce niveau mais toujours présent dans l'image (couche antérieure jamais
+# purgée). On décompresse donc explicitement chaque couche de `docker save`
+# et on y cherche la sentinelle — seule elle, motif non générique, sans
+# risque de faux positif sur du contenu vendorisé légitime.
+# ---------------------------------------------------------------------------
+log "recherche de la sentinelle dans l'historique des couches (docker save, décompressé)"
+SAVE_TAR="$(mktemp -u).tar"
+SAVE_DIR="$(mktemp -d)"
+docker save "$IMAGE" -o "$SAVE_TAR"
+tar -xf "$SAVE_TAR" -C "$SAVE_DIR"
+layer_hit=""
+for blob in "$SAVE_DIR"/blobs/sha256/*; do
+  if gzip -t "$blob" 2>/dev/null; then
+    if zcat "$blob" 2>/dev/null | grep -qa "$FIXTURE_SENTINEL"; then
+      layer_hit="$blob"
+      break
+    fi
+  elif grep -qa "$FIXTURE_SENTINEL" "$blob" 2>/dev/null; then
+    layer_hit="$blob"
+    break
+  fi
+done
+rm -f "$SAVE_TAR"
+rm -rf "$SAVE_DIR"
+if [ -n "$layer_hit" ]; then
+  echo "[FAIL] sentinelle trouvée dans une couche historique : $layer_hit" >&2
+  fail "la sentinelle de fixture apparaît dans l'historique des couches Docker (voir chemin ci-dessus)"
+fi
+log "historique des couches : sentinelle absente"
 
 # --- (13) aucun compte committé dans l'image (fraîche, sans volume) -------
 log "vérification qu'aucun compte n'est baké dans l'image (conteneur sans volume)"
@@ -65,11 +173,11 @@ is_array="$(docker exec "$CONTAINER" php -r 'var_export(is_array(require "/var/w
 log "secret valide chargé sans erreur, forme conforme à ce qu'attend contact.php"
 
 # --- (14b bis) non-affichage du secret dans les logs --------------------
-log "vérification que la valeur du secret n'apparaît pas dans les logs du conteneur"
-if docker logs "$CONTAINER" 2>&1 | grep -q "FIXTURE-SECRET-DO-NOT-REUSE"; then
-  fail "la valeur du mot de passe de test apparaît en clair dans les logs du conteneur"
+log "vérification que la sentinelle n'apparaît pas dans les logs du conteneur"
+if docker logs "$CONTAINER" 2>&1 | grep -q "$FIXTURE_SENTINEL"; then
+  fail "la sentinelle de fixture apparaît en clair dans les logs du conteneur"
 fi
-log "secret absent des logs"
+log "sentinelle absente des logs"
 docker rm -f "$CONTAINER" >/dev/null 2>&1
 
 # --- (14c) secret présent mais invalide (non-array) : pas de crash ------

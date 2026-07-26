@@ -7,6 +7,11 @@ grav/user/accounts/
 .env
 .env.*
 
+# Fixtures de test contenant des valeurs qui ressemblent à des secrets
+# (jamais réelles, mais sans intérêt à envoyer au démon de build — voir
+# l'incident documenté dans docs/testing.md sur test-secrets.sh)
+tests/fixtures/
+
 # Données d'exécution locales, jamais destinées à l'image
 grav/user/cache/
 grav/user/logs/

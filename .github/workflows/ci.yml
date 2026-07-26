@@ -37,6 +37,7 @@ jobs:
 
       - name: Secrets handling and absence of committed secrets
         run: sh tests/test-secrets.sh
+      
         
       # test-persistence.sh et test-update-rollback.sh restent documentés
       # et exécutables localement (docs/testing.md) : scénarios à deux temps
