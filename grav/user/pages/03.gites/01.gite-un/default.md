@@ -22,34 +22,58 @@ galerie:
     photos:
         -
             fichier: photo-1.jpg
-            alt: 'Photo à venir — Salon'
+            alt: 'Salle à manger - Salon-1'
             espace: salon
             ordre: 1
             vitrine: 1
         -
             fichier: photo-2.jpg
-            alt: 'Photo à venir — Cuisine'
+            alt: 'Cannapé lit - Salon-2'
+            espace: salon
+            ordre: 1
+            vitrine: 1
+        -        
+            fichier: photo-3.jpg
+            alt: 'Vue avec escalier - Cuisine-1'
             espace: cuisine
             ordre: 1
             vitrine: 2
         -
-            fichier: photo-3.jpg
-            alt: 'Photo à venir — Salle de bain'
+            fichier: photo-4.jpg
+            alt: 'Vue avec evier - Cuisine-2'
+            espace: cuisine
+            ordre: 1
+            vitrine: 2
+        -                    
+            fichier: photo-5.jpg
+            alt: 'Douche - Salle de bain-1'
             espace: salle_de_bain
             ordre: 1
             vitrine: 3
         -
-            fichier: photo-4.jpg
-            alt: 'Photo à venir — Chambres'
+            fichier: photo-6.jpg
+            alt: 'WC - Salle de bain-2'
+            espace: salle_de_bain
+            ordre: 1
+            vitrine: 3
+        -        
+            fichier: photo-7.jpg
+            alt: 'Chambre à coucher — Chambres'
             espace: chambres
             ordre: 1
             vitrine: 4
         -
-            fichier: photo-5.jpg
-            alt: 'Photo à venir — Photos supplémentaires'
+            fichier: photo-8.jpg
+            alt: 'Photo de l'éscalier - Photos supplémentaires-1'
             espace: autres
             ordre: 1
             vitrine: 5
+        -
+            fichier: photo-9.jpg
+            alt: 'Photo de la facade extérieur - Photos supplémentaires-2'
+            espace: autres
+            ordre: 1
+            vitrine: 5            
 disponibilites:
     periodes_indisponibles:
         -

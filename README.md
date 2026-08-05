@@ -29,8 +29,9 @@ docker build -t projet-gites:local .
 
 ```bash
 docker compose -f compose.dev.yml up -d --build
-```
 
+docker compose -f compose.dev.yml down -v
+```
 - Site : http://localhost:8080
 - Admin : http://localhost:8080/admin (identifiants de test définis dans `compose.dev.yml`, jetables — voir le fichier)
 

@@ -75,6 +75,7 @@
 .galerie-apercu {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 100%;
   grid-auto-flow: column;
   gap: 0.5rem;
   height: 400px;
