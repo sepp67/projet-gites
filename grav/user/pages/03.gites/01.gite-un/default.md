@@ -64,7 +64,7 @@ galerie:
             vitrine: 4
         -
             fichier: photo-8.jpg
-            alt: 'Photo de l'éscalier - Photos supplémentaires-1'
+            alt: 'Photo de l'escalier - Photos supplémentaires-1'
             espace: autres
             ordre: 1
             vitrine: 5
