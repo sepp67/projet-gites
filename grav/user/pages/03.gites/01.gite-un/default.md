@@ -64,10 +64,10 @@ galerie:
             vitrine: 4
         -
             fichier: photo-8.jpg
-            alt: 'Photo de l'escalier - Photos supplémentaires-1'
+            alt: 'Photo escalier - Photos supplémentaires-1'
             espace: autres
             ordre: 1
-            vitrine: 5
+            vitrine: 5cd 
         -
             fichier: photo-9.jpg
             alt: 'Photo de la facade extérieur - Photos supplémentaires-2'
