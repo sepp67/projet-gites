@@ -1,9 +1,3 @@
-
----
-
-### 3. `projet-gites` – Nouvelle introduction
-
-```markdown
 # projet-gites
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
