@@ -1,3 +1,33 @@
+
+---
+
+### 3. `projet-gites` – Nouvelle introduction
+
+```markdown
+# projet-gites
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/GHCR-ready-blue)](https://ghcr.io/sepp67/projet-gites)
+
+**Image applicative Grav pour le site des Gîtes (Alsace & Vosges).**
+
+Ce dépôt contient **uniquement** la couche métier :
+- thème
+- plugins métier
+- configuration non secrète
+- contenu initial (seed)
+
+Il s’appuie sur le socle technique [`grav-runtime`](https://github.com/sepp67/grav-runtime) et est déployé par le rôle [`ansible-role-grav-site`](https://github.com/sepp67/ansible-role-grav-site).
+
+Cette séparation permet de faire évoluer le contenu du site sans toucher au runtime, et de déployer de façon identique en développement et en production.
+
+## Architecture de la stack
+
+```text
+grav-runtime               →  socle technique (Nginx + PHP-FPM + Grav Core)
+    └── projet-gites       →  contenu métier (ce dépôt)
+            └── ansible-role-grav-site  →  déploiement + secrets + volumes
+
 # projet-gites
 
 Image applicative Grav du site des gîtes (Alsace & Vosges). Ce dépôt ne contient que le
