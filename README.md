@@ -17,10 +17,11 @@ Cette séparation permet de faire évoluer le contenu du site sans toucher au ru
 
 ## Architecture de la stack
 
-```text
+```mermaid
 grav-runtime               →  socle technique (Nginx + PHP-FPM + Grav Core)
     └── projet-gites       →  contenu métier (ce dépôt)
             └── ansible-role-grav-site  →  déploiement + secrets + volumes
+```
 
 # projet-gites
 
