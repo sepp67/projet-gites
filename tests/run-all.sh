@@ -5,7 +5,7 @@ set -eu
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
-for script in test-build.sh test-startup.sh test-app-presence.sh test-contact-routing.sh test-secrets.sh test-persistence.sh test-update-rollback.sh; do
+for script in test-build.sh test-startup.sh test-app-presence.sh test-contact-routing.sh test-contact-routing-cleanup.sh test-secrets.sh test-persistence.sh test-update-rollback.sh; do
   echo "=================================================================="
   echo "== $script"
   echo "=================================================================="

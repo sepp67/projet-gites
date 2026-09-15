@@ -33,11 +33,22 @@ MAILPIT="projet-gites-test-contact-mailpit"
 PORT="18090"
 MAILPIT_API_PORT="18091"
 FIXTURE_EMAIL_PRIVATE="$REPO_ROOT/tests/fixtures/email-private.mailpit-contact-routing.php"
+# Initialisé avant l'enregistrement du trap pour que cleanup() reste sûr sous
+# `set -u` même si EXIT survient avant la création réelle du répertoire
+# (mktemp) plus bas dans le script.
+TMP=""
 
 cleanup() {
   docker rm -f "$CONTAINER" "$MAILPIT" >/dev/null 2>&1 || true
   docker network rm "$NETWORK" >/dev/null 2>&1 || true
   rm -f "$FIXTURE_EMAIL_PRIVATE"
+  # Suppression strictement gardée : jamais de glob, jamais un chemin vide ou
+  # non résolu transmis à `rm -rf`. Sûre en cas d'échec avant ou après la
+  # création de $TMP, en cas de succès complet, d'appel répété de cleanup(),
+  # ou si le répertoire a déjà été supprimé entre-temps.
+  if [ -n "${TMP:-}" ] && [ -d "$TMP" ]; then
+    rm -rf -- "$TMP"
+  fi
 }
 trap cleanup EXIT
 cleanup
@@ -302,7 +313,10 @@ render_and_extract_hidden() {
 # submit_contact LABEL RENDER_URL GITE_VALUE OMIT_GITE : soumet le
 # formulaire avec le nonce réel extrait de RENDER_URL. Écrit le code HTTP
 # dans $STATUS et le corps de réponse dans $RESP_FILE.
-TMP="$(mktemp -d)"
+# Préfixe identifiable (pas un simple "tmp.XXXXXX") : permet de vérifier par
+# préfixe contrôlé, sans glob générique, qu'aucun répertoire ne survit à
+# cleanup() — voir la note de non-régression plus bas dans ce script.
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/projet-gites-contact-routing.XXXXXX")"
 submit_contact() {
   label="$1"; render_url="$2"; gite_value="$3"; omit_gite="${4:-no}"
   jar="$TMP/jar-$label"

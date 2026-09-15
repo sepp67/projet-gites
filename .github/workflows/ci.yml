@@ -38,6 +38,9 @@ jobs:
       - name: Contact form recipient selection and validation (SEC-GITES-001)
         run: sh tests/test-contact-routing.sh
 
+      - name: Contact routing temporary directory cleanup (no Docker required)
+        run: sh tests/test-contact-routing-cleanup.sh
+
       - name: Secrets handling and absence of committed secrets
         run: sh tests/test-secrets.sh
       
