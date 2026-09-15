@@ -30,7 +30,12 @@ form:
       validate:
         required: true
     gite:
-      type: hidden
+      type: select
+      label: Gîte concerné
+      help: Choisissez le gîte auquel se rapporte votre demande.
+      data-options@: 'Grav\Plugin\ContactPlugin::contactGiteOptionsProvider'
+      validate:
+        required: true
     honeypot:
       type: honeypot
   buttons:

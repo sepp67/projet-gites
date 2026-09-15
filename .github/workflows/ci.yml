@@ -35,6 +35,9 @@ jobs:
       - name: Application presence (theme, plugins, seed, assets)
         run: sh tests/test-app-presence.sh
 
+      - name: Contact form recipient selection and validation (SEC-GITES-001)
+        run: sh tests/test-contact-routing.sh
+
       - name: Secrets handling and absence of committed secrets
         run: sh tests/test-secrets.sh
       

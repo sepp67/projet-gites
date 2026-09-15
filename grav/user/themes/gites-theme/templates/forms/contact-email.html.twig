@@ -13,7 +13,8 @@
 {% endif %}
 <p><strong>Message :</strong><br>{{ form.value('message')|e|nl2br }}</p>
 
-{% if form.value('gite') %}
+{% set gite_label = contact_gite_label(form.value('gite')) %}
+{% if gite_label %}
 <hr>
-<p><small>Gîte concerné : {{ form.value('gite')|e }}</small></p>
+<p><small>Gîte concerné : {{ gite_label|e }}</small></p>
 {% endif %}
