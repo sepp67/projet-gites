@@ -1,7 +1,7 @@
 # compose.dev.yml — développement local UNIQUEMENT.
 #
 # N'est jamais utilisé en production : le Compose de production est
-# généré exclusivement par ansible-role-grav-site:1.0.1 (voir
+# généré exclusivement par ansible-role-grav-site:2.0.0 (voir
 # docs/deployment-model... / docs/release-and-rollback.md). Ce fichier
 # ne doit jamais devenir une seconde implémentation du déploiement.
 #

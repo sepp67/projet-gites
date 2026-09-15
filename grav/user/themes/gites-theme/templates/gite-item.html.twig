@@ -63,7 +63,11 @@
         <section class="gite-contact">
             <h2>Contacter le propriétaire</h2>
             {% set contact_form = forms('contact-form') %}
-            {% do contact_form.setData('gite', page.route) %}
+            {# Présélection ergonomique uniquement : une valeur cliente, #}
+            {# jamais une preuve de sécurité. La sélection reste visible  #}
+            {# et modifiable ; le serveur revalide et résout l'adresse   #}
+            {# indépendamment de cette présélection (SEC-GITES-001).     #}
+            {% do contact_form.setData('gite', page.slug) %}
             {% include 'forms/form.html.twig' with { form: contact_form } %}
         </section>
     </article>

@@ -1,7 +1,7 @@
 # Compose utilisé UNIQUEMENT par tests/test-persistence.sh et
 # tests/test-update-rollback.sh — jamais pour le développement (voir
 # compose.dev.yml à la racine) ni pour la production (voir
-# ansible-role-grav-site:1.0.1). Volumes nommés par projet Compose pour ne
+# ansible-role-grav-site:2.0.0). Volumes nommés par projet Compose pour ne
 # jamais entrer en collision avec compose.dev.yml.
 
 services:

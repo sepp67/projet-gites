@@ -1,6 +1,16 @@
 name: Contact
-version: 0.1.0
+version: 0.2.0
 description: >
-  Résolution du destinataire des demandes de contact : associe la route d'un
-  gîte à l'adresse e-mail du compte de son propriétaire (TASK-004-02-03).
+  Résolution du destinataire des demandes de contact : sélection visible et
+  obligatoire d'un gîte contactable, validée et résolue exclusivement côté
+  serveur (identifiant public de page -> propriétaire -> compte -> adresse).
+  Corrige SEC-GITES-001 (un champ caché permettait de substituer
+  silencieusement un autre propriétaire valide que celui de la fiche
+  affichée).
 enabled: true
+
+# Sous-arbre et template des pages considérées comme des gîtes contactables.
+# Les pages Grav de ce sous-arbre constituent le registre métier des gîtes :
+# aucune liste d'identifiants n'est codée en dur dans le plugin.
+gites_root: /gites
+gite_template: gite-item
