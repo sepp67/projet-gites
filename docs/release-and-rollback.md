@@ -13,7 +13,7 @@ développement (compose.dev.yml)
     → tag Git SemVer (vX.Y.Z)
     → publication GHCR (release.yml, déclenché uniquement par le tag)
     → certification (compatibility-policy.md, mise à jour de la matrice)
-    → déploiement Ansible (ansible-role-grav-site:1.0.1)
+    → déploiement Ansible (ansible-role-grav-site:2.0.0)
     → mise à jour (rejouer avec un grav_version différent)
     → rollback manuel (rejouer avec un grav_version antérieur)
 ```
@@ -38,6 +38,19 @@ réellement testée pour cette release.
 
 ## Déploiement
 
+Exemple pour `ansible-role-grav-site:2.0.0`. **Compatibilité statique vérifiée** dans ce
+chantier par lecture du code du rôle (`defaults/main.yml`, `templates/docker-compose.yml.j2`)
+et de son guide de migration (`docs/MIGRATION.md` du rôle) — **aucun déploiement Ansible réel
+n'a été exécuté avec la version `2.0.0` dans ce chantier** : aucune VM cible n'a été
+sollicitée, aucune commande `ansible-playbook` n'a été lancée. La seule rupture d'interface
+qui concerne cet exemple face à la version `1.0.1` précédemment citée ici est
+`grav_bind_address`, désormais ajouté explicitement ci-dessous car il n'a plus de valeur
+implicite (voir le guide de migration du rôle, §2) ; les autres variables utilisées
+(`grav_image`, `grav_version`, `grav_container_name`, `grav_http_port`, `grav_admin_*`,
+`grav_secrets`) sont inchangées. **La compatibilité opérationnelle réelle — le rôle
+déployant effectivement cette image sur une VM cible — reste à confirmer lors du prochain
+déploiement effectif**, pas avant.
+
 ```yaml
 - hosts: grav_servers
   become: true
@@ -47,6 +60,7 @@ réellement testée pour cette release.
         grav_image: "ghcr.io/sepp67/projet-gites"
         grav_version: "1.0.0"
         grav_container_name: projet-gites
+        grav_bind_address: "192.168.1.10"   # IPv4 de la VM cible — obligatoire depuis 2.0.0, voir ci-dessus
         grav_http_port: 8080
         grav_admin_user: admin
         grav_admin_email: admin@example.com

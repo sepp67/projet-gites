@@ -58,6 +58,23 @@ Signification précise :
 | Version `projet-gites` | Version `grav-runtime` certifiée | Date | Suite de tests exécutée |
 |---|---|---|---|
 | `1.0.0` | `1.0.2` | (date de la première release) | `tests/run-all.sh` |
+| `1.1.0` (proposée — non encore taguée) | `1.0.4` | 2026-09-14 | `tests/run-all.sh`, y compris `test-contact-routing.sh` (SEC-GITES-001) |
+
+La ligne `1.1.0` correspond au correctif SEC-GITES-001 (voir
+[`security-notes.md`](security-notes.md)) : le `Dockerfile` de cette combinaison pinne déjà
+`grav-runtime:1.0.4`, et l'intégralité de `tests/run-all.sh` a réellement été exécutée et a
+réussi contre cette combinaison exacte à ce commit — c'est une combinaison **testée**, pas
+seulement utilisée en configuration. Portée précise de cette certification : elle certifie
+le **contrat exercé par cette suite** (build, démarrage, rendu réel, formulaire de contact et
+son routage, secrets, persistance, mise à jour/rollback) contre `grav-runtime:1.0.4` — elle
+ne prouve pas l'ensemble des comportements possibles du runtime, seulement ceux que ces tests
+exercent effectivement. Elle reste marquée « non encore taguée » tant qu'aucun tag Git
+`v1.1.0` n'a été créé ni publié (voir [`release-and-rollback.md`](release-and-rollback.md)) :
+cette page documente ce qui a été vérifié, pas une release qui n'a pas encore eu lieu. Les
+versions `1.0.1` à `1.0.7` existantes en tags Git ne sont pas rétroactivement documentées
+ici — leur combinaison `grav-runtime` réelle au moment de chaque release n'a pas été
+reconstituée dans ce chantier (hors périmètre : voir la note de prudence en tête de ce
+document sur la certification descendante, propre à chaque release).
 
 Cette table est mise à jour à chaque release (voir
 [`release-and-rollback.md`](release-and-rollback.md)).

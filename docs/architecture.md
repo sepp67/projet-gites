@@ -9,13 +9,13 @@ pourquoi le dépôt est structuré ainsi.
 ## Les trois couches
 
 ```text
-grav-runtime (ghcr.io/sepp67/grav-runtime:1.0.2)
+grav-runtime (ghcr.io/sepp67/grav-runtime:1.0.4)
     │  socle technique générique — même image pour n'importe quel site Grav
     │
     └── projet-gites (ce dépôt, ghcr.io/sepp67/projet-gites)
             │  code et contenu propres au site des gîtes
             │
-            └── ansible-role-grav-site:1.0.1
+            └── ansible-role-grav-site:2.0.0
                     déploiement — génère le Compose de production, gère les
                     volumes, les secrets, le healthcheck, la version déployée
 ```
