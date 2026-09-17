@@ -18,9 +18,20 @@ Ce dépôt produit l'image applicative du site des gîtes à partir de
 
 ## Référence historique
 
-Avant de reprendre une fonctionnalité historique, consulter
-`../4-projet-gites-poc/CLAUDE.md` et appliquer la méthode de comparaison qui
-y est définie.
+Le POC initial n’appartient plus au workspace actif. Le présent dépôt constitue
+désormais la référence applicative du site des gîtes.
+
+Lorsqu’un comportement historique doit être réintroduit :
+
+1. décrire précisément le comportement recherché ;
+2. vérifier qu’il reste pertinent dans l’architecture actuelle ;
+3. identifier le composant qui en est aujourd’hui responsable ;
+4. concevoir une adaptation compatible avec les contrats actuels ;
+5. tester cette adaptation sans recopier automatiquement l’ancienne
+   implémentation.
+
+Ne jamais réintroduire une dépendance au POC ni recopier depuis une archive un
+secret, un compte, une configuration d’instance ou une dépendance non validée.
 
 ## Contrôles spécifiques
 
