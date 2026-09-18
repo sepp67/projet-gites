@@ -31,8 +31,8 @@ form:
         required: true
     gite:
       type: select
-      label: Gîte concerné
-      help: Choisissez le gîte auquel se rapporte votre demande.
+      label: Destinataire
+      help: Contacter ce gîte ou l'administrateur du site
       data-options@: 'Grav\Plugin\ContactPlugin::contactGiteOptionsProvider'
       validate:
         required: true
