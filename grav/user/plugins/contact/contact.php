@@ -175,7 +175,7 @@ class ContactPlugin extends Plugin
      */
     public static function contactGiteOptionsProvider(): array
     {
-        $options = ['' => '— Sélectionnez un gîte —'];
+        $options = ['' => '— Contacter ce gîte —'];
         foreach (self::contactTable() as $id => $entry) {
             $options[$id] = $entry['label'];
         }
@@ -251,7 +251,7 @@ class ContactPlugin extends Plugin
         $generalEmail = self::validatedGeneralAddress();
         if ($generalEmail !== null) {
             $table[self::GENERAL_ID] = [
-                'label' => 'Demande générale (aucun gîte en particulier)',
+                'label' => 'Contacter l\'administrateur du site',
                 'type' => 'general',
                 'page' => null,
                 'account' => null,

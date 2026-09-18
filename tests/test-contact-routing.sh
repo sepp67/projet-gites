@@ -419,7 +419,7 @@ echo "$block_contact" | grep -q '<select' || fail "A1 : le champ gite n'est pas 
 
 log "A2 — label associé, présent et explicite"
 contact_html="$(curl -s "http://localhost:$PORT/contact")"
-echo "$contact_html" | grep -qF 'Gîte concerné' || fail "A2 : libellé 'Gîte concerné' absent"
+echo "$contact_html" | grep -qF 'Destinataire' || fail "A2 : libellé 'Destinataire' absent"
 
 log "A3 — les deux gîtes réels et l'option générale sont présents"
 echo "$block_contact" | grep -qF 'value="gite-un"' || fail "A3 : option gite-un absente"
@@ -455,7 +455,7 @@ echo "$block_contact" | grep -qF 'selected="selected" value=""' \
 
 log "A9 — la page au slug réservé 'general' n'a pas écrasé l'option générale"
 general_option_line="$(echo "$block_contact" | grep -F 'value="general"')"
-echo "$general_option_line" | grep -qF 'Demande générale' \
+echo "$general_option_line" | grep -qF "Contacter l&#039;administrateur du site" \
   || fail "A9 : l'option 'general' ne porte plus son libellé standard — possible écrasement par la page de collision"
 echo "$general_option_line" | grep -qF "Collision avec l'identifiant réservé" \
   && fail "A9 (RÉGRESSION) : le titre de la page de collision est apparu dans l'option générale"
